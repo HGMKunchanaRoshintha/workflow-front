@@ -4,96 +4,224 @@ import { Tree, TreeNode } from "react-organizational-chart";
 import DetailService from "../service/DetailService";
 
 export default function Home() {
+  // define user states
   const [user, setUser] = useState([]);
-  const [rootDetail, setRootDetail] = useState([])
 
-  // const fetchData = () => {
-  //     return axios.get("https://randomuser.me/api")
-  //           .then((response) => setUser(response.data.results[0]));
-  //   }
-
+  // define useEffect
   useEffect(() => {
     DetailService.getDetails().then((response) => {
-      console.log(response.data);
       setUser(response.data);
     });
   }, []);
 
+  // create the root node object
+  let rootNode = {};
 
-  const rootNode = {};
+  // seperate root node details and assign it to root node reference
+  {
+    user.map((item, index) => {
+      if (item.parentCard == "0") {
+        rootNode = item;
+        return;
+      }
+    });
+  }
 
-  {user.map((item, index) =>{
-    console.log(item.name);
-    if(item.parentCard == "0"){
-      setRootDetail(item)
-    } else {
-     
-    }
-   })};
+  // sort the user list by using parent card no
+  const ascendingByParentCard = [...user].sort(
+    (a, b) => a.parentCard - b.parentCard
+  );
 
-  //  console.log(rootNode[0])
+  // remove the root node details and set other data to return data refernce
+  const returnData = ascendingByParentCard.slice(1);
 
-  const Card = (props) => {
-    return (
-      <ul>
-        {props.data.map((item, index) => (
-          <Fragment key={item.name}>
-            <li>
-              <div className="card ">
-                <div className="card-body">
-                  <h4>{user.country}</h4>
-                  <p>{user.gender}</p>
-                  <p>ajhdkjdhaal</p>
-                </div>
-              </div>
-              {item.children?.length && <Card data={item.children} />}
-            </li>
-          </Fragment>
-        ))}
-      </ul>
-    );
-  };
 
-  return (
-    // <div className="org-tree">
-    //   <Card data={data} />
-    // </div>
+  const list = [];
+  returnData.forEach((product) => {
     
-    
+    list.push(product)
+  })
 
-    <div className="container mt-3">
 
+
+
+  // this treeNodeSet const use for set the datas to tree node elements
+  const treeNodeSet = returnData.map((item, index) => {
+    // returnData.forEach(element => {
+    //   element.parentCard == item.parentCard? <li></li> : <li></li>;
+    // });   
     
-      <Tree
-        label={ 
+    return (      
+      rootNode.id == returnData.parentCard ?
+      <TreeNode
+        key={item.id}
+        label={
           <div className="d-flex justify-content-center">
             <div className="card bg-primary">
-              <ul className="list-group bg-primary" style={{ textAlign: "left" }}>
-                <li className="list-group-item">Name : {rootDetail.name} </li>
-                <li className="list-group-item">Dapibus ac facilisis in</li>
-                <li className="list-group-item">Morbi leo risus</li>
-                <li className="list-group-item">Porta ac consectetur ac</li>
-                <li className="list-group-item">Vestibulum at eros</li>
+              <ul
+                className="list-group bg-primary"
+                style={{ textAlign: "left" }}
+              >
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Id:</span> {item.id}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Name:</span> {item.name}{" "}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Description:</span>{" "}
+                  {item.description}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Time Duration:</span>
+                  {item.timeDuration}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>parentCard:</span>{" "}
+                  {item.parentCard}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Attributes:</span>
+                  {item.attributes}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Role:</span>
+                  {item.role}
+                </li>
+              </ul>
+            </div>
+          </div>
+        }
+      >    
+
+        <TreeNode
+        key={item.id++}
+        label={
+          <div className="d-flex justify-content-center">
+            <div className="card bg-primary">
+              <ul
+                className="list-group bg-primary"
+                style={{ textAlign: "left" }}
+              >
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Id:</span> {item.id}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Name:</span> {item.name}{" "}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Description:</span>{" "}
+                  {item.description}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Time Duration:</span>
+                  {item.timeDuration}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>parentCard:</span>{" "}
+                  {item.parentCard}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Attributes:</span>
+                  {item.attributes}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Role:</span>
+                  {item.role}
+                </li>
+              </ul>
+            </div>
+          </div>
+        }
+      ></TreeNode>
+        
+      </TreeNode>: <TreeNode label={
+          <div className="d-flex justify-content-center">
+            <div className="card bg-primary">
+              <ul
+                className="list-group bg-primary"
+                style={{ textAlign: "left" }}
+              >
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Id:</span> {item.id}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Name:</span> {item.name}{" "}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Description:</span>{" "}
+                  {item.description}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Time Duration:</span>
+                  {item.timeDuration}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>parentCard:</span>{" "}
+                  {item.parentCard}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Attributes:</span>
+                  {item.attributes}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Role:</span>
+                  {item.role}
+                </li>
+              </ul>
+            </div>
+          </div>
+        }></TreeNode>
+    );
+  });
+
+  return (
+    <div className="container mt-3 mb-5">
+      {/* root node datas set to tree element */}
+      <Tree
+        label={
+          <div className="d-flex justify-content-center">
+            <div className="card bg-primary">
+              <ul
+                className="list-group bg-primary"
+                style={{ textAlign: "left" }}
+              >
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Id:</span>
+                  {rootNode.id}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Name:</span>
+                  {rootNode.name}{" "}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Description:</span>
+                  {rootNode.description}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Time Duration:</span>
+                  {rootNode.timeDuration}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>parentCard:</span>
+                  {rootNode.parentCard}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Attributes:</span>
+                  {rootNode.attributes}
+                </li>
+                <li className="list-group-item">
+                  <span style={{ fontWeight: "bold" }}>Role:</span>
+                  {rootNode.role}
+                </li>
               </ul>
             </div>
           </div>
         }
       >
-        <TreeNode label={<div>Child 1</div>}>
-          <TreeNode label={<div>Grand Child</div>} />
-        </TreeNode>
-        <TreeNode label={<div>Child 2</div>}>
-          <TreeNode label={<div>Grand Child</div>}>
-            <TreeNode label={<div>Great Grand Child 1</div>} />
-            <TreeNode label={<div>Great Grand Child 2</div>} />
-          </TreeNode>
-        </TreeNode>
-        <TreeNode label={<div>Child 3</div>}>
-          <TreeNode label={<div>Grand Child 1</div>} />
-          <TreeNode label={<div>Grand Child 2</div>} />
-        </TreeNode>
+        {/* created treeNodeSer Const Set to here */}
+        {treeNodeSet}
       </Tree>
     </div>
   );
-  
 }
